@@ -1,7 +1,74 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 
-const StreamListComponent = () =>{
-    return <div>StreamList</div>;
+import { fetchStreams } from '../../actions';
+
+class StreamListComponent extends React.Component
+{
+    componentDidMount()
+    {
+        this.props.fetchStreams();
+    }
+
+    renderActions(stream)
+    {
+        if(this.props.isSignedIn && stream.userId === this.props.currentUserId)
+        {
+            return(
+                <div className="right floated content">
+                    <button className="ui button primary">Edit</button>
+                    <button className="ui button negative">Delete</button>
+                </div>
+            );
+        }
+    }
+
+    renderCreateStreamButton()
+    {
+        if(this.props.isSignedIn)
+            return(
+                <div style={{ textAlign:'right'}}>
+                    <Link to="/streams/new">Create Stream</Link>
+                </div>
+            );
+    }
+
+    renderList()
+    {
+        return this.props.streams.map((stream) =>{
+            return(
+                <div className="item" key={stream.id}>
+                    {this.renderActions(stream)}
+                    <i className="large middle aligned icon camera"/>
+                    <div className="content">
+                        {stream.title}
+                        <div className="description">{stream.description}</div>
+                    </div>
+                </div>
+            );
+        });
+    }
+
+    render()
+    {
+        return(
+            <div>
+                <h2>Streams</h2>
+                <div className="ui celled list">
+                    {this.renderList()}
+                </div>
+                {this.renderCreateStreamButton()}
+            </div>
+        );
+    }
 };
 
-export default StreamListComponent;
+const mapStateToProps = (state) =>{
+    return {
+        isSignedIn:state.auth.isSignedIn, 
+        currentUserId: state.auth.userId, 
+        streams: Object.values(state.streams)};
+};
+
+export default connect(mapStateToProps, { fetchStreams })(StreamListComponent);
