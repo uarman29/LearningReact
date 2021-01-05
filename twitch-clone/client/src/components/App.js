@@ -23,7 +23,7 @@ const App = (props)=>
                         <ProtectedRouteComponent path="/streams/new" component={StreamCreateComponent} auth={props.isSignedIn}/>
                         <ProtectedRouteComponent path="/streams/edit/:id" component={StreamEditComponent} auth={props.isSignedIn}/>
                         <ProtectedRouteComponent path="/streams/delete/:id" component={StreamDeleteComponent} auth={props.isSignedIn}/>
-                        <Route path="/streams/show/:id" component={StreamShowComponent}/>
+                        <Route path="/streams/:id" component={StreamShowComponent}/>
                         <Redirect to="/" />
                     </Switch>
                 </div>
