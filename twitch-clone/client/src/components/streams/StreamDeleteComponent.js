@@ -12,6 +12,15 @@ class StreamDeleteComponent extends React.Component
         this.props.fetchStream(this.props.match.params.id);
     }
 
+    componentDidUpdate()
+    {
+        if(this.stream && this.props.userId !== this.props.stream.userId)
+        {
+            history.push('/');
+            return null;
+        }
+    }
+
     renderActions = () =>{
         return(
             <React.Fragment>
@@ -34,7 +43,7 @@ class StreamDeleteComponent extends React.Component
         return(
             <Modal 
                 title="Delete Stream"
-                content="Are you sure you want to delete this stream?"
+                content={this.renderContent()}
                 actions = {this.renderActions()}
                 onDismiss = {() => history.push("/")}
             />
@@ -44,7 +53,7 @@ class StreamDeleteComponent extends React.Component
 
 const mapStateToProps = (state, ownProps) =>
 {
-    return {stream: state.streams[ownProps.match.params.id]};
+    return {userId: state.auth.userId, stream: state.streams[ownProps.match.params.id]};
 };
 
 export default connect(mapStateToProps, { fetchStream, deleteStream })(StreamDeleteComponent);

@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { fetchStream, editStream } from '../../actions';
 import StreamFormComponent from './StreamFormComponent';
+import history from '../../history';
 
 class StreamEditComponent extends React.Component
 {
@@ -14,6 +15,15 @@ class StreamEditComponent extends React.Component
         this.props.editStream(this.props.match.params.id, formValues);
     }
 
+    componentDidUpdate()
+    {
+        if(this.stream && this.props.userId !== this.props.stream.userId)
+        {
+            history.push('/');
+            return null;
+        }
+    }
+    
     render()
     {
         if(!this.props.stream)
@@ -35,6 +45,6 @@ class StreamEditComponent extends React.Component
 };
 
 const mapStateToProps = (state, ownProps) =>{
-    return {stream: state.streams[ownProps.match.params.id]};
+    return {userId: state.auth.userId, stream: state.streams[ownProps.match.params.id]};
 };
 export default connect(mapStateToProps, {fetchStream, editStream})(StreamEditComponent);
