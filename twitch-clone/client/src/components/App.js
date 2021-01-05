@@ -1,5 +1,6 @@
 import React from 'react';
-import { Router, Route} from 'react-router-dom';
+import { Router, Route, Switch, Redirect} from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import StreamCreateComponent from './streams/StreamCreateComponent';
 import StreamDeleteComponent from './streams/StreamDeleteComponent';
@@ -8,22 +9,30 @@ import StreamListComponent from './streams/StreamListComponent';
 import StreamShowComponent from './streams/StreamShowComponent';
 import HeaderComponent from './HeaderComponent';
 import history from '../history';
+import ProtectedRouteComponent from './ProtectedRouteComponent';
 
-const App = ()=>{
+const App = (props)=>
+{
     return(
         <div className="ui container">
             <Router history={history}>
                 <div>
                     <HeaderComponent />
-                    <Route path="/" exact component={StreamListComponent}/>
-                    <Route path="/streams/new" component={StreamCreateComponent}/>
-                    <Route path="/streams/edit/:id" component={StreamEditComponent}/>
-                    <Route path="/streams/delete/:id" component={StreamDeleteComponent}/>
-                    <Route path="/streams/show/:id" component={StreamShowComponent}/>
+                    <Switch>
+                        <Route path="/" exact component={StreamListComponent}/>
+                        <ProtectedRouteComponent path="/streams/new" component={StreamCreateComponent} auth={props.isSignedIn}/>
+                        <ProtectedRouteComponent path="/streams/edit/:id" component={StreamEditComponent} auth={props.isSignedIn}/>
+                        <ProtectedRouteComponent path="/streams/delete/:id" component={StreamDeleteComponent} auth={props.isSignedIn}/>
+                        <Route path="/streams/show/:id" component={StreamShowComponent}/>
+                        <Redirect to="/" />
+                    </Switch>
                 </div>
             </Router>
         </div>
     );
 };
 
-export default App;
+const mapStateToProps = (state) =>{
+    return {isSignedIn: state.auth.isSignedIn};
+}
+export default connect(mapStateToProps)(App);
