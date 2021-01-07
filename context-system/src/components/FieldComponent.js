@@ -7,7 +7,7 @@ class FieldComponent extends React.Component
 
     render()
     {
-        const text = this.context === 'english' ? 'Name' : 'Namae';
+        const text = this.context.language === 'english' ? 'Name' : 'Namae';
 
         return(
             <div className="ui field">
